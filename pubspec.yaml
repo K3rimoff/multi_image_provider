@@ -3,9 +3,25 @@ description: >
   A Flutter widget for displaying images with customizable aspect ratio,
   supporting asset, network (with caching), and SVG image types.
 version: 1.0.1
+license: MIT
 homepage: https://github.com/K3rimoff/multi_image_provider
 repository: https://github.com/K3rimoff/multi_image_provider
 issue_tracker: https://github.com/K3rimoff/multi_image_provider/issues
+
+topics:
+  - image
+  - aspect-ratio
+  - svg
+  - network
+  - asset
+  - cache
+  - widget
+  - ui
+  - responsive
+  - media
+  - display
+  - render
+  - cross-platform
 
 environment:
   sdk: ^3.8.1
@@ -24,3 +40,6 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
+  assets:
+    - assets/icons/sample.svg
+    - assets/images/sample.png

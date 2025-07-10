@@ -1,12 +1,16 @@
 // example/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:multi_image_provider/multi_image_provider.dart';
 
+/// The entry point of the example application.
 void main() {
   runApp(const MyApp());
 }
 
+/// Root widget of the example application.
 class MyApp extends StatelessWidget {
+  /// Creates the root widget.
   const MyApp({super.key});
 
   @override
@@ -18,18 +22,21 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// A page that demonstrates usage examples of the [MultiImage] widget.
 class ImageExamplePage extends StatelessWidget {
+  /// Creates the example page widget.
   const ImageExamplePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Multi Image Provider')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // 📦 Asset image
+          // 📦 Asset image example
           const MultiImage(
             imagePath: 'assets/images/sample.png',
             imageType: ImageType.asset,
@@ -39,7 +46,7 @@ class ImageExamplePage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // 🌐 Cached Network image
+          // 🌐 Cached network image example
           MultiImage(
             imagePath: 'https://picsum.photos/400/600',
             imageType: ImageType.network,
@@ -51,7 +58,7 @@ class ImageExamplePage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // 🧩 SVG asset
+          // 🧩 SVG asset example
           const MultiImage(
             imagePath: 'assets/icons/sample.svg',
             imageType: ImageType.svgAsset,
@@ -60,7 +67,7 @@ class ImageExamplePage extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // 🌐 SVG from network (cached)
+          // 🌐 SVG network image example (cached)
           const MultiImage(
             imagePath: 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
             imageType: ImageType.svgNetwork,

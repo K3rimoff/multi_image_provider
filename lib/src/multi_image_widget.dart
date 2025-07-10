@@ -6,28 +6,68 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../multi_image_provider.dart';
 import 'cache/image_cache_manager.dart';
 
+/// A widget that displays an image with a fixed aspect ratio.
+///
+/// Supports multiple image sources such as asset, network, and SVG (asset/network).
+/// Provides border radius, placeholder, error widget, and decoration options.
 class MultiImage extends StatelessWidget {
+  /// Creates a [MultiImage] widget.
   const MultiImage({
     super.key,
+
+    /// The path to the image (either asset path or network URL).
     required this.imagePath,
+
+    /// The type of image source.
     this.imageType = ImageType.asset,
+
+    /// The aspect ratio to maintain (width / height).
     this.aspectRatio = 1.0,
+
+    /// The desired width of the image (height is calculated using aspect ratio).
     this.width,
+
+    /// How the image should be inscribed into the space allocated.
     this.fit = BoxFit.cover,
+
+    /// Optional border radius for rounding corners.
     this.borderRadius = BorderRadius.zero,
+
+    /// Placeholder widget shown while loading.
     this.placeholder,
+
+    /// Widget shown in case of error.
     this.errorWidget,
+
+    /// Optional [BoxDecoration] to wrap the image.
     this.decoration,
   });
 
+  /// The image path to be loaded.
   final String imagePath;
+
+  /// The type of image to load.
   final ImageType imageType;
+
+  /// Aspect ratio to maintain (width / height).
   final double aspectRatio;
+
+  /// Optional fixed width for the image.
   final double? width;
+
+  /// BoxFit for the image rendering.
   final BoxFit fit;
+
+  /// Border radius to apply to the image.
   final BorderRadius borderRadius;
+
+  /// Placeholder widget while image is loading.
   final Widget? placeholder;
+
+  /// Error widget if image fails to load.
   final Widget? errorWidget;
+
+  /// Optional decoration for the image container.
   final BoxDecoration? decoration;
 
   @override
@@ -71,10 +111,7 @@ class MultiImage extends StatelessWidget {
         break;
     }
 
-    imageWidget = ClipRRect(
-      borderRadius: borderRadius,
-      child: imageWidget,
-    );
+    imageWidget = ClipRRect(borderRadius: borderRadius, child: imageWidget);
 
     final finalWidget = decoration == null
         ? imageWidget
@@ -83,10 +120,7 @@ class MultiImage extends StatelessWidget {
     if (width != null) {
       return SizedBox(
         width: width,
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: finalWidget,
-        ),
+        child: AspectRatio(aspectRatio: aspectRatio, child: finalWidget),
       );
     }
 

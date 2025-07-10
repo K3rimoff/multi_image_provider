@@ -1,32 +1,36 @@
+
 # Multi Image Provider
 
-A versatile Flutter widget to display images with custom aspect ratio, supporting multiple image sources including asset, network (with caching), and SVG images.
+🌟 A versatile Flutter widget to display images with custom aspect ratio, supporting multiple image sources including asset, network (with caching), and SVG images.
 
-## Features
+## ✨Features
+✅ Supports asset images (Image.asset)
 
-- Supports asset images (`Image.asset`)
-- Supports network images with caching (`cached_network_image`)
-- Supports SVG images from assets and network (`flutter_svg` + caching)
-- Custom aspect ratio control
-- Border radius and decoration support
-- Placeholder and error widgets for network images
+✅ Network and SVG images are automatically cached for faster loading and offline access.
 
-## Installation
+✅ Supports network images with caching (cached_network_image)
 
+✅ Supports SVG images from assets and network (flutter_svg + caching)
+
+✅ Custom aspect ratio control
+
+✅ Border radius and decoration support
+
+✅ Placeholder and error widgets for network images
+## 🚀Installation
 Add to your `pubspec.yaml`:
-
 ```yaml
-dependencies:
+  dependencies:
   multi_image_provider: ^1.0.0
 ```
-
 Then run:
 ```bash
 flutter pub get
 ```
-## Usage
+## 🛠️Usage
 ```dart
 import 'package:multi_image_provider/multi_image_provider.dart';
+
 MultiImage(
   imagePath: 'assets/images/sample.png',
   imageType: ImageType.asset,
@@ -35,7 +39,7 @@ MultiImage(
 )
 ```
 
-## For network images:
+## 🌐For network images:
 ```dart
 MultiImage(
   imagePath: 'https://picsum.photos/400/600',
@@ -45,3 +49,9 @@ MultiImage(
   placeholder: CircularProgressIndicator(),
 )
 ```
+## 📌Notes
+⚠️ Currently, the package does not support the Web platform due to dependency on `flutter_cache_manager` and `path_provider`.
+
+Works on Android, iOS, Windows, Linux, and macOS platforms.
+
+Does not support Web or WASM runtimes due to underlying dependencies.
