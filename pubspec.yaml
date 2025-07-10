@@ -1,5 +1,4 @@
 name: multi_image_provider
-publish_to: https://pub.dev
 description: >
   A Flutter widget for displaying images with customizable aspect ratio,
   supporting asset, network (with caching), and SVG image types.
