@@ -15,13 +15,6 @@ topics:
   - network
   - asset
   - cache
-  - widget
-  - ui
-  - responsive
-  - media
-  - display
-  - render
-  - cross-platform
 
 environment:
   sdk: ^3.8.1
