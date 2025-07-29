@@ -3,136 +3,175 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../multi_image_provider.dart';
-import 'cache/image_cache_manager.dart';
+import 'package:multi_image_provider/multi_image_provider.dart';
 
-/// A widget that displays an image with a fixed aspect ratio.
+/// A versatile widget that displays an image with robust sizing options.
 ///
-/// Supports multiple image sources such as asset, network, and SVG (asset/network).
-/// Provides border radius, placeholder, error widget, and decoration options.
+/// This widget supports multiple image sources: local assets (PNG, JPG, SVG)
+/// and network URLs (PNG, JPG, SVG). It provides caching for network images,
+/// including SVGs, via a [FutureBuilder].
+///
+/// The sizing logic is highly flexible:
+/// 1. If both [width] and [height] are provided, they are used directly,
+///    and [aspectRatio] is ignored.
+/// 2. If [aspectRatio] is provided, it will be maintained. If [width] or [height]
+///    is also provided, the other dimension will be calculated automatically.
+/// 3. If only [width] or [height] is provided, that single dimension is fixed.
 class MultiImage extends StatelessWidget {
   /// Creates a [MultiImage] widget.
   const MultiImage({
     super.key,
-
-    /// The path to the image (either asset path or network URL).
     required this.imagePath,
-
-    /// The type of image source.
     this.imageType = ImageType.asset,
-
-    /// The aspect ratio to maintain (width / height).
-    this.aspectRatio = 1.0,
-
-    /// The desired width of the image (height is calculated using aspect ratio).
+    this.aspectRatio,
     this.width,
-
-    /// How the image should be inscribed into the space allocated.
+    this.height,
     this.fit = BoxFit.cover,
-
-    /// Optional border radius for rounding corners.
     this.borderRadius = BorderRadius.zero,
-
-    /// Placeholder widget shown while loading.
     this.placeholder,
-
-    /// Widget shown in case of error.
     this.errorWidget,
-
-    /// Optional [BoxDecoration] to wrap the image.
     this.decoration,
   });
 
-  /// The image path to be loaded.
+  /// The path to the image, which can be a network URL or a local asset path.
   final String imagePath;
 
-  /// The type of image to load.
+  /// The type of the image source. Defaults to [ImageType.asset].
   final ImageType imageType;
 
-  /// Aspect ratio to maintain (width / height).
-  final double aspectRatio;
+  /// The desired aspect ratio (width / height) to maintain.
+  ///
+  /// This property is ignored if both [width] and [height] are provided.
+  final double? aspectRatio;
 
-  /// Optional fixed width for the image.
+  /// The desired width of the image widget.
   final double? width;
 
-  /// BoxFit for the image rendering.
+  /// The desired height of the image widget.
+  final double? height;
+
+  /// How the image should be inscribed into the allocated space.
+  /// Defaults to [BoxFit.cover].
   final BoxFit fit;
 
-  /// Border radius to apply to the image.
+  /// The border radius to apply for rounding the corners of the image.
+  /// Defaults to [BorderRadius.zero].
   final BorderRadius borderRadius;
 
-  /// Placeholder widget while image is loading.
+  /// A widget to display while the image is loading.
+  ///
+  /// If null, a [CircularProgressIndicator] is shown by default.
   final Widget? placeholder;
 
-  /// Error widget if image fails to load.
+  /// A widget to display if an error occurs while loading the image.
+  ///
+  /// If null, an [Icons.error] icon is shown.
   final Widget? errorWidget;
 
-  /// Optional decoration for the image container.
+  /// An optional [BoxDecoration] to apply behind the image container.
   final BoxDecoration? decoration;
 
   @override
   Widget build(BuildContext context) {
     Widget imageWidget;
 
+    // Determine the appropriate image widget based on the source type.
     switch (imageType) {
       case ImageType.asset:
-        imageWidget = Image.asset(imagePath, fit: fit);
+        imageWidget = ClipRRect(
+          borderRadius: borderRadius,
+          child: Image.asset(imagePath, fit: fit),
+        );
         break;
 
       case ImageType.network:
+        // Network image with custom cache manager (from ImageCacheManager)
         imageWidget = CachedNetworkImage(
           imageUrl: imagePath,
           fit: fit,
-          placeholder: (context, url) =>
-              placeholder ?? const Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) =>
-              errorWidget ?? const Icon(Icons.error),
+          cacheManager: ImageCacheManager.instance,
+          placeholder: (context, url) => _buildPlaceholder(),
+          errorWidget: (context, url, error) => _buildErrorWidget(),
+          imageBuilder: (context, imageProvider) => ClipRRect(
+            borderRadius: borderRadius,
+            child: Image(image: imageProvider, fit: fit),
+          ),
         );
         break;
 
       case ImageType.svgAsset:
-        imageWidget = SvgPicture.asset(imagePath, fit: fit);
+        imageWidget = ClipRRect(
+          borderRadius: borderRadius,
+          child: SvgPicture.asset(imagePath, fit: fit),
+        );
         break;
 
       case ImageType.svgNetwork:
+        // First cache the SVG file using custom cache manager
         imageWidget = FutureBuilder<File>(
           future: ImageCacheManager.instance.getSingleFile(imagePath),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return placeholder ??
-                  const Center(child: CircularProgressIndicator());
+              return _buildPlaceholder();
             } else if (snapshot.hasError || !snapshot.hasData) {
-              return errorWidget ?? const Icon(Icons.error);
+              return _buildErrorWidget();
             } else {
-              return SvgPicture.file(snapshot.data!, fit: fit);
+              return ClipRRect(
+                borderRadius: borderRadius,
+                child: SvgPicture.file(snapshot.data!, fit: fit),
+              );
             }
           },
         );
         break;
     }
 
-    imageWidget = ClipRRect(borderRadius: borderRadius, child: imageWidget);
-
+    // Apply decoration behind image (optional)
     final finalWidget = decoration == null
         ? imageWidget
         : Container(decoration: decoration, child: imageWidget);
 
-    if (width != null) {
-      return SizedBox(
-        width: width,
-        child: AspectRatio(aspectRatio: aspectRatio, child: finalWidget),
-      );
+    // --- Start of the robust sizing logic ---
+
+    if (width != null && height != null) {
+      return SizedBox(width: width, height: height, child: finalWidget);
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double maxWidth = constraints.maxWidth;
-        return SizedBox(
-          width: maxWidth,
-          height: maxWidth / aspectRatio,
-          child: finalWidget,
-        );
-      },
+    if (aspectRatio != null) {
+      Widget constrainedChild = AspectRatio(
+        aspectRatio: aspectRatio!,
+        child: finalWidget,
+      );
+
+      if (width != null || height != null) {
+        return SizedBox(width: width, height: height, child: constrainedChild);
+      }
+
+      return constrainedChild;
+    }
+
+    if (width != null) {
+      return SizedBox(width: width, child: finalWidget);
+    }
+
+    if (height != null) {
+      return SizedBox(height: height, child: finalWidget);
+    }
+
+    return finalWidget;
+  }
+
+  Widget _buildPlaceholder() {
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: placeholder ?? const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: errorWidget ?? const Icon(Icons.error),
     );
   }
 }

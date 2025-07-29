@@ -5,4 +5,5 @@
 library;
 
 export 'src/multi_image_widget.dart';
+export 'src/cache/image_cache_manager.dart';
 export 'src/image_type.dart';

@@ -21,7 +21,7 @@
 Add to your `pubspec.yaml`:
 ```yaml
   dependencies:
-  multi_image_provider: ^1.0.0
+  multi_image_provider: ^1.0.2
 ```
 Then run:
 ```bash
@@ -30,25 +30,64 @@ flutter pub get
 ## 🛠️Usage
 ```dart
 import 'package:multi_image_provider/multi_image_provider.dart';
-
-MultiImage(
-  imagePath: 'assets/images/sample.png',
-  imageType: ImageType.asset,
-  aspectRatio: 382 / 500,
-  borderRadius: BorderRadius.circular(12),
-)
 ```
 
-## 🌐For network images:
+## ⚙️ App Initialization (`main.dart`)
+
+```dart
+void main() {
+  // ✅ Ensures Flutter binding is initialized before any plugin or service.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 🗂️ Initializes the ImageCacheManager with custom settings:
+  //    - stalePeriod: Defines how long cached images are considered valid (e.g. 10 days).
+  //    - maxNrOfCacheObjects: Limits the number of images stored in the cache.
+  ImageCacheManager.init(
+    stalePeriod: Duration(days: 10),
+    maxNrOfCacheObjects: 10,
+  );
+
+  // 🚀 Launches the application.
+  runApp(const MyApp());
+}
+```
+
+## 📦 Asset image example
 ```dart
 MultiImage(
-  imagePath: 'https://picsum.photos/400/600',
-  imageType: ImageType.network,
-  aspectRatio: 382 / 500,
-  width: MediaQuery.of(context).size.width * 0.9,
-  placeholder: CircularProgressIndicator(),
+ imagePath: "assets/image.jpg",
+ borderRadius: BorderRadius.all(Radius.circular(30)),
+ )
+```
+
+## 🌐 Cached network image example
+```dart
+MultiImage(
+ imageType: ImageType.network,
+ imagePath: "https://images.pexels.com/photos/378570/pexels-photo-378570.jpeg",
+ borderRadius: BorderRadius.all(Radius.circular(20)),
+ aspectRatio: 1,
 )
 ```
+## 🧩 SVG asset example
+```dart
+MultiImage(
+ imageType: ImageType.svgAsset,
+ imagePath: "assets/sample.svg",
+ width: 200,
+ height: 200,
+)
+```
+## 🕸️ SVG network image example (cached)
+```dart
+MultiImage(
+ imageType: ImageType.svgNetwork,
+ imagePath: "https://www.svgrepo.com/show/530486/earphone.svg",
+ height: 300,
+ width: 300,
+)
+```
+
 ## 📌Notes
 ⚠️ Currently, the package does not support the Web platform due to dependency on `flutter_cache_manager` and `path_provider`.
 

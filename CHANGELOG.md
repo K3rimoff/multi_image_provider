@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.2] - 2025-07-29
+### Added
+- Improved cache management in MultiImage widget.
+- Added documentation comments throughout the code.
+- Fixed minor bugs and formatting issues.
+
 ## [1.0.1] - 2025-07-10
 ### Added
 - Improved cache management in MultiImage widget.

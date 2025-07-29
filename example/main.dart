@@ -5,6 +5,12 @@ import 'package:multi_image_provider/multi_image_provider.dart';
 
 /// The entry point of the example application.
 void main() {
+  //If you want to add specific parameters for the cache, you should add this section.
+  WidgetsFlutterBinding.ensureInitialized();
+  ImageCacheManager.init(
+    stalePeriod: Duration(days: 10),
+    maxNrOfCacheObjects: 10,
+  );
   runApp(const MyApp());
 }
 
@@ -29,8 +35,6 @@ class ImageExamplePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Multi Image Provider')),
       body: ListView(
@@ -38,40 +42,39 @@ class ImageExamplePage extends StatelessWidget {
         children: [
           // 📦 Asset image example
           const MultiImage(
-            imagePath: 'assets/images/sample.png',
-            imageType: ImageType.asset,
-            aspectRatio: 382 / 500,
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            imagePath: "assets/image.jpg",
+            borderRadius: BorderRadius.all(Radius.circular(30)),
           ),
 
           const SizedBox(height: 24),
 
           // 🌐 Cached network image example
           MultiImage(
-            imagePath: 'https://picsum.photos/400/600',
             imageType: ImageType.network,
-            aspectRatio: 382 / 500,
-            width: screenWidth * 0.9,
-            borderRadius: BorderRadius.circular(12),
-            placeholder: const Center(child: CircularProgressIndicator()),
+            imagePath:
+                "https://images.pexels.com/photos/378570/pexels-photo-378570.jpeg",
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            aspectRatio: 1,
           ),
 
           const SizedBox(height: 24),
 
           // 🧩 SVG asset example
           const MultiImage(
-            imagePath: 'assets/icons/sample.svg',
             imageType: ImageType.svgAsset,
-            aspectRatio: 1,
+            imagePath: "assets/sample.svg",
+            width: 200,
+            height: 200,
           ),
 
           const SizedBox(height: 24),
 
           // 🌐 SVG network image example (cached)
           const MultiImage(
-            imagePath: 'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/410.svg',
             imageType: ImageType.svgNetwork,
-            aspectRatio: 1,
+            imagePath: "https://www.svgrepo.com/show/530486/earphone.svg",
+            height: 300,
+            width: 300,
           ),
         ],
       ),

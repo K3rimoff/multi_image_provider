@@ -2,7 +2,7 @@ name: multi_image_provider
 description: >
   A Flutter widget for displaying images with customizable aspect ratio,
   supporting asset, network (with caching), and SVG image types.
-version: 1.0.1
+version: 1.0.2
 license: MIT
 homepage: https://github.com/K3rimoff/multi_image_provider
 repository: https://github.com/K3rimoff/multi_image_provider
@@ -33,5 +33,4 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/icons/sample.svg
-    - assets/images/sample.png
+    - assets/
