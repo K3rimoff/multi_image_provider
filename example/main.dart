@@ -5,12 +5,18 @@ import 'package:multi_image_provider/multi_image_provider.dart';
 
 /// The entry point of the example application.
 void main() {
-  //If you want to add specific parameters for the cache, you should add this section.
+  // ✅ Ensures Flutter binding is initialized before any plugin or service.
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 🗂️ Initializes the ImageCacheManager with custom settings:
+  //    - stalePeriod: Defines how long cached images are considered valid (e.g. 10 days).
+  //    - maxNrOfCacheObjects: Limits the number of images stored in the cache.
   ImageCacheManager.init(
     stalePeriod: Duration(days: 10),
     maxNrOfCacheObjects: 10,
   );
+
+  // 🚀 Launches the application.
   runApp(const MyApp());
 }
 
